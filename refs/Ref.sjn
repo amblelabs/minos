@@ -1,0 +1,65 @@
+backpkg dev/example/Sojourn;
+backpkg dev/example/nameoftype;
+
+// This is a normal comment
+
+/--
+ -- This is a comment block.
+ -- It can span multiple lines.
+--/
+
+/--
+ -- Primitive Types:
+ -- str = String
+ -- int = Integer
+ -- u_int = Unsigned Integer
+ -- dbl = Double
+ -- u_dbl = Unsigned Double
+ -- flt = Float
+ -- u_flt = Unsigned Float
+ -- byte = Byte
+ -- bool = Boolean
+ -- char = Character
+ -- var = Variable
+--/
+
+/--
+ -- pub nameOfMethod = public
+ -- *nameOfMethod = static
+--/
+
+/--
+ -- Boolean Logic Operators = Same As Java
+ -- Math Operators = Same As Java
+--/
+
+ref = nameoftype + {
+    Type willNeverBeNull = Type<str>("example");
+    Type? canBeNull = Type<str>("example");
+    str[] stringArray = {"one", "two", "three"};
+    int[] integerArray = {1, 2, 3};
+
+    str : pub *backPackAmount = [int amount] {
+        return "Backpack count = " + amount;
+    }
+
+    Type? : backPackType = [] {
+        return canBeNull;
+    }
+
+    str : pub giveMeTheRightThing = [int index] {
+        return [index] {
+            0 = "It's not null";
+            1 = "It's null";
+            else = "I don't know";
+        };
+    }
+
+    bool : pub doesThisReturnCorrectly = [str firstInput, str secondInput] {
+        return firstInput == "one" && secondInput == "two";
+    }
+
+    int : pub countChars = [str input] {
+        return input.length();
+    }
+}

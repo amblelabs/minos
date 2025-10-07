@@ -28,6 +28,9 @@ bin/
 !**/src/main/**/bin/
 !**/src/test/**/bin/
 
+### Idea ###
+.idea
+
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/
