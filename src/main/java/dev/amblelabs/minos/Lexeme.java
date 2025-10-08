@@ -9,6 +9,13 @@ public record Lexeme(String lexeme, Type type) {
         BOOL,
         IDENTIFIER,
         OPERATOR,
+        DIVIDE,
+        PLUS,
+        MINUS,
+        MULTIPLY,
+        LPAREN,
+        RPAREN,
+        EOF,
         KEYWORD
     }
 }

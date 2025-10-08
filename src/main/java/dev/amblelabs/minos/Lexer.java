@@ -1,41 +1,60 @@
 package dev.amblelabs.minos;
 
-import java.io.IOException;
-import java.io.Reader;
-
 public class Lexer {
 
-    public final Reader reader;
+    private final String source;
+    private int currentPos = 0;
 
-    public Lexer(Reader reader) {
-        this.reader = reader;
+    public Lexer(String source) {
+        this.source = source;
     }
 
-    public Lexeme next() throws IOException {
-        int character = reader.read();
-        Lexeme lexeme = switch(character) {
-            default -> {
-                if (character == -1) {
-                    yield null;
-                }
-                StringBuilder sb = new StringBuilder();
-                sb.append((char) character);
-                Lexeme.Type type = Lexeme.Type.INT;
-                while (true) {
-                    reader.mark(1);
-                    character = reader.read();
-                    // TODO add error handling - Loqor
-                    if (character == '.' && type != Lexeme.Type.DECIMAL) {
-                        type = Lexeme.Type.DECIMAL;
-                    } else if (character == -1 || !(Character.isDigit(character) ||
-                            character == '.')) {
-                        break;
-                    }
-                    sb.append((char) character);
-                }
-                yield new Lexeme(sb.toString(), Lexeme.Type.INT);
+    public Lexeme next() {
+        while (currentPos < source.length() && Character.isWhitespace(source.charAt(currentPos))) {
+            currentPos++;
+        }
+
+        if (currentPos >= source.length()) {
+            return new Lexeme("", Lexeme.Type.EOF);
+        }
+
+        char character = source.charAt(currentPos);
+
+        switch (character) {
+            case '+' : currentPos++; return new Lexeme("+", Lexeme.Type.PLUS);
+            case '-' : currentPos++; return new Lexeme("-", Lexeme.Type.MINUS);
+            case '*' : currentPos++; return new Lexeme("*", Lexeme.Type.MULTIPLY);
+            case '/' : currentPos++; return new Lexeme("/", Lexeme.Type.DIVIDE);
+            case '=' : currentPos++; return new Lexeme("=", Lexeme.Type.OPERATOR);
+            case '{' : currentPos++; return new Lexeme("{", Lexeme.Type.LPAREN);
+            case '}' : currentPos++; return new Lexeme("}", Lexeme.Type.RPAREN);
+        }
+
+        if (Character.isLetter(character)) {
+            StringBuilder sb = new StringBuilder();
+            while (currentPos < source.length() && (Character.isLetterOrDigit(source.charAt(currentPos)) || source.charAt(currentPos) == '_')) {
+                sb.append(source.charAt(currentPos));
+                currentPos++;
             }
-        };
-        return lexeme;
+            String lexemeStr = sb.toString();
+            Lexeme.Type type = switch (lexemeStr) {
+                case "let", "const", "if", "else", "while", "for", "return", "function", "true", "false" -> Lexeme.Type.KEYWORD;
+                default -> Lexeme.Type.IDENTIFIER;
+            };
+            return new Lexeme(lexemeStr, type);
+        }
+
+        if (Character.isDigit(character)) {
+            StringBuilder num = new StringBuilder();
+            while (currentPos < source.length() && (Character.isDigit(source.charAt(currentPos)) || source.charAt(currentPos) == '.')) {
+                num.append(source.charAt(currentPos));
+                currentPos++;
+            }
+            return new Lexeme(num.toString(), num.toString().contains(".") ? Lexeme.Type.DECIMAL : Lexeme.Type.INT);
+        }
+
+        System.err.println("Unexpected character: " + character);
+        currentPos++;
+        return next();
     }
 }
